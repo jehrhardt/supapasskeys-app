@@ -1,4 +1,3 @@
-import { cssBundleHref } from "@remix-run/css-bundle";
 import type { LinksFunction } from "@remix-run/deno";
 import {
   Links,
@@ -9,9 +8,10 @@ import {
   ScrollRestoration,
 } from "@remix-run/react";
 import * as React from "react";
+import stylesheet from "./tailwind.css";
 
-export const links: LinksFunction = () => [
-  ...(cssBundleHref ? [{ rel: "stylesheet", href: cssBundleHref }] : []),
+export const links: LinksFunction  = () => [
+  { rel: "stylesheet", href: stylesheet },
 ];
 
 export default function App() {
