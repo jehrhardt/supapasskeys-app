@@ -1,5 +1,5 @@
 import { createServerClient, parse, serialize } from "https://esm.sh/@supabase/ssr@0.0.10";
-import { SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2.38.4";
+import { SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2.38.5";
 import { load } from "https://deno.land/std@0.207.0/dotenv/mod.ts";
 import { ActionFunctionArgs } from "@remix-run/deno";
 
