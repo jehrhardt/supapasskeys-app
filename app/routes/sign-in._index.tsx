@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import supabaseClient from "../supabase.server.ts";
-import { ActionFunctionArgs, redirect } from "@remix-run/deno";
+import { signUp } from "../supabase.server.ts";
+import { ActionFunctionArgs, json, redirect } from "@remix-run/deno";
 import { Form, useNavigation } from "@remix-run/react";
 
 export default function SignIn() {
@@ -22,24 +22,16 @@ export default function SignIn() {
 }
 
 export async function action({ request }: ActionFunctionArgs) {
-  const formData = await request.formData();
-  const email = formData.get("email");
-  const headers = new Headers();
-  const supabase = await supabaseClient(request, headers);
-  console.log("Email: ", email);
-
-  const { data, error } = await supabase.auth.signInWithOtp({
-    email,
-    options: {
-      shouldCreateUser: false,
-      emailRedirectTo: "http://localhost:8000/",
-    },
-  });
-
-  if (error) {
-    console.error(error);
-    return redirect("/sign-in/error", { headers });
+  switch (request.method) {
+    case "post": {
+      const formData = await request.formData();
+      const email = formData.get("email");
+      return await signUp(email, request);
+    }
+    default:
+      return new Response(null, {
+        status: 405,
+        statusText: "Method Not Allowed",
+      });
   }
-
-  return redirect("/sign-in/verify", { headers });
 }

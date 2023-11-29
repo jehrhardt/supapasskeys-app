@@ -3,12 +3,72 @@ import {
   parse,
   serialize,
 } from "https://esm.sh/@supabase/ssr@0.0.10";
-import { SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2.38.5";
+import { EmailOtpType, SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2.38.5";
 import { load } from "https://deno.land/std@0.207.0/dotenv/mod.ts";
-import { ActionFunctionArgs } from "@remix-run/deno";
+import {
+  ActionFunctionArgs,
+  LoaderFunctionArgs,
+  redirect,
+} from "@remix-run/deno";
 
-export default async function supabaseClient(
+type User = {
+  email: string;
+};
+
+export async function requireUser(request: LoaderFunctionArgs): Promise<User> {
+  const headers = new Headers();
+  const supabase = await supabaseClient(request, headers);
+  const { data: { session } } = await supabase.auth.getSession();
+  const user = session?.user;
+  if (!user || !user.email) {
+    throw redirect("/sign-in", { headers });
+  }
+  return { email: user.email };
+}
+
+export async function signUp(
+  email: string,
   request: ActionFunctionArgs,
+): Promise<Response> {
+  const headers = new Headers();
+  const supabase = await supabaseClient(request);
+  const { error } = await supabase.auth.signInWithOtp({
+    email,
+    options: {
+      shouldCreateUser: false,
+      emailRedirectTo: "http://localhost:8000/",
+    },
+  });
+
+  if (error) {
+    console.error(error);
+    return redirect("/sign-in/error", { headers });
+  }
+
+  return redirect("/sign-in/verify", { headers });
+}
+
+export async function verfiyToken(type: EmailOtpType | null, token_hash: string | null, request: LoaderFunctionArgs) {
+  const headers = new Headers();
+  if (token_hash && type) {
+    const supabase = await supabaseClient(request, headers);
+    const { error } = await supabase.auth.verifyOtp({
+      type,
+      token_hash,
+    });
+
+    if (!error) {
+      console.log("User verified");
+      return redirect("/", { headers });
+    }
+    console.log("User not verified, error: ", error);
+  }
+
+  return redirect("/sign-in", { headers });
+}
+
+async function supabaseClient(
+  request: ActionFunctionArgs | LoaderFunctionArgs,
   headers: Headers = new Headers(),
   // deno-lint-ignore no-explicit-any
 ): Promise<SupabaseClient<any, "public", any>> {
