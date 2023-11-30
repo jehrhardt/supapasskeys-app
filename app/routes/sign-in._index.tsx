@@ -23,7 +23,7 @@ export default function SignIn() {
 
 export async function action({ request }: ActionFunctionArgs) {
   switch (request.method) {
-    case "post": {
+    case "POST": {
       const formData = await request.formData();
       const email = formData.get("email");
       return await signUp(email, request);
