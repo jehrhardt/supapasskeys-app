@@ -3,7 +3,10 @@ import {
   parse,
   serialize,
 } from "https://esm.sh/@supabase/ssr@0.0.10";
-import { EmailOtpType, SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2.38.5";
+import {
+  EmailOtpType,
+  SupabaseClient,
+} from "https://esm.sh/@supabase/supabase-js@2.38.5";
 import { load } from "https://deno.land/std@0.207.0/dotenv/mod.ts";
 import {
   ActionFunctionArgs,
@@ -29,9 +32,9 @@ export async function requireUser(request: LoaderFunctionArgs): Promise<User> {
 export async function signUp(
   email: string,
   request: ActionFunctionArgs,
-): Promise<Response> {
-  const headers = new Headers();
-  const supabase = await supabaseClient(request);
+  headers: Headers,
+) {
+  const supabase = await supabaseClient(request, headers);
   const { error } = await supabase.auth.signInWithOtp({
     email,
     options: {
@@ -41,14 +44,18 @@ export async function signUp(
   });
 
   if (error) {
-    console.error(error);
-    return redirect("/sign-in/error", { headers });
+    console.log("Error signing up: ", error);
+    return { errors: { email: "Sign-up failed" } };
   }
 
-  return redirect("/sign-in/verify", { headers });
+  return { ok: true };
 }
 
-export async function verfiyToken(type: EmailOtpType | null, token_hash: string | null, request: LoaderFunctionArgs) {
+export async function verfiyToken(
+  type: EmailOtpType | null,
+  token_hash: string | null,
+  request: LoaderFunctionArgs,
+) {
   const headers = new Headers();
   if (token_hash && type) {
     const supabase = await supabaseClient(request, headers);
@@ -69,7 +76,7 @@ export async function verfiyToken(type: EmailOtpType | null, token_hash: string 
 
 async function supabaseClient(
   request: ActionFunctionArgs | LoaderFunctionArgs,
-  headers: Headers = new Headers(),
+  headers: Headers,
   // deno-lint-ignore no-explicit-any
 ): Promise<SupabaseClient<any, "public", any>> {
   const cookies = parse(request.headers.get("Cookie") ?? "");
