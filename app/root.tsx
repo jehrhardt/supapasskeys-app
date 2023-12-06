@@ -10,7 +10,7 @@ import {
 import * as React from "react";
 import stylesheet from "./tailwind.css";
 
-export const links: LinksFunction  = () => [
+export const links: LinksFunction = () => [
   { rel: "stylesheet", href: stylesheet },
 ];
 
