@@ -6,7 +6,7 @@
 
 import type { AppLoadContext, EntryContext } from "@remix-run/deno";
 import { RemixServer } from "@remix-run/react";
-import isbot from "isbot";
+import { isbot } from "isbot";
 import React from "react";
 import { renderToReadableStream } from "react-dom/server";
 
