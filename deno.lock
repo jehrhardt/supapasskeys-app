@@ -6,6 +6,7 @@
       "npm:@remix-run/deno@^2.4.1": "npm:@remix-run/deno@2.4.1",
       "npm:@supabase/supabase-js@^2.39.2": "npm:@supabase/supabase-js@2.39.3",
       "npm:isbot@^3.6.8": "npm:isbot@3.7.1",
+      "npm:isbot@^4.3.0": "npm:isbot@4.3.0",
       "npm:react-dom@^18.2.0": "npm:react-dom@18.2.0_react@18.2.0",
       "npm:react@^18.2.0": "npm:react@18.2.0"
     },
@@ -114,6 +115,10 @@
       },
       "isbot@3.7.1": {
         "integrity": "sha512-JfqOaY3O1lcWt2nc+D6Mq231CNpwZrBboLa59Go0J8hjGH+gY/Sy0CA/YLUSIScINmAVwTdJZIsOTk4PfBtRuw==",
+        "dependencies": {}
+      },
+      "isbot@4.3.0": {
+        "integrity": "sha512-cohu4X66cXP120xwF+UubL+BQzOQLN1O0DOPOmkci6elgZ7o6XIn8B3FARk59RL0aX3cGTq8Ta7MVOWpay3rbw==",
         "dependencies": {}
       },
       "js-tokens@4.0.0": {
