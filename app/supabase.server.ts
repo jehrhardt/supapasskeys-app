@@ -1,18 +1,8 @@
-import {
-  createServerClient,
-  parse,
-  serialize,
-} from "https://esm.sh/@supabase/ssr@0.0.10";
-import {
-  EmailOtpType,
-  SupabaseClient,
-} from "https://esm.sh/@supabase/supabase-js@2.38.5";
-import { load } from "https://deno.land/std@0.207.0/dotenv/mod.ts";
-import {
-  ActionFunctionArgs,
-  LoaderFunctionArgs,
-  redirect,
-} from "@remix-run/deno";
+import { load } from "https://deno.land/std@0.210.0/dotenv/mod.ts";
+import { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/deno";
+import { createServerClient, parse, serialize } from "https://esm.sh/@supabase/ssr@0.0.10";
+import { EmailOtpType, SupabaseClient } from "@supabase/supabase-js";
+import { redirect } from "@remix-run/react";
 
 type User = {
   email: string;
@@ -52,13 +42,14 @@ export async function signUp(
 }
 
 export async function verfiyToken(
-  type: EmailOtpType | null,
+  emailType: string | null,
   token_hash: string | null,
   request: LoaderFunctionArgs,
 ) {
   const headers = new Headers();
-  if (token_hash && type) {
+  if (token_hash && emailType) {
     const supabase = await supabaseClient(request, headers);
+    const type = emailType as EmailOtpType;
     const { error } = await supabase.auth.verifyOtp({
       type,
       token_hash,
